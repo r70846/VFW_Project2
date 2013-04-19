@@ -1,4 +1,5 @@
-// Activity 2
+// Russell Gaspard
+// Project 2
 // Visual Frameworks - VFW 1304
 // Mobile Development
 // Full Sail University
@@ -13,7 +14,6 @@ window.addEventListener("DOMContentLoaded", function(){
 		return thisElement;
 	}
 
-	
 	//Build Instrument Selector
 	function makePrimaryList(){
 		var theForm = document.forms[0];
@@ -30,11 +30,10 @@ window.addEventListener("DOMContentLoaded", function(){
 		pSelect.appendChild(newSelect);
 	};
 	
-	
 	//find which checkboxes are checked
 	function getAllInstruments(){
 		var checks = document.forms[0].all;
-		var instruments = ["All Instruments"];
+		var instruments = ["All Instruments:"];
 		for(var i=0, j=checks.length; i<j; i++){
 			if(checks[i].checked){
 				instruments.push(checks[i].value);
@@ -43,8 +42,26 @@ window.addEventListener("DOMContentLoaded", function(){
 		return instruments;
 	}
 	
+	function controlToggle(x){
+		switch(x){
+			case "on":
+				id("theForm").style.display = "none";
+				id("clearDataLink").style.display = "inline";
+				id("displayDataLink").style.display = "none";
+				id("addAnother").style.display = "inline";
+				break;
+			case "off":
+				id("theForm").style.display = "block";
+				id("clearDataLink").style.display = "inline";
+				id("displayDataLink").style.display = "inline";
+				id("addAnother").style.display = "none";
+				id("musicians").style.display = "none";
+				break;
+			default:
+				return false;
+		}
 	
-	
+	}
 	
 	function saveData(){
 		var randomID = Math.floor(Math.random()*100000);
@@ -66,21 +83,66 @@ window.addEventListener("DOMContentLoaded", function(){
 		alert("Musician Data Saved");	
 	};
 	
+	function displayData(){
+		if(localStorage.length === 0){
+			alert("No musician data has been saved.");
+		}else{
+			controlToggle("on");
+		}
+		var newDiv =document.createElement("div");
+		newDiv.setAttribute("id","musicians");
+		newList =document.createElement("ul");
+		newDiv.appendChild(newList);
+		document.body.appendChild(newDiv);
+		id("musicians").style.display = "block";
+		for(i=0, j=localStorage.length; i<j; i++){
+			newItem = document.createElement("li");
+			newList.appendChild(newItem);
+			var key = localStorage.key(i);
+			var value = localStorage.getItem(key);
+			var data = JSON.parse(value);
+			var newSubList = document.createElement("ul");
+			newItem.appendChild(newSubList);
+			for(var n in data){
+				var newSubItem = document.createElement("li");
+				newSubList.appendChild(newSubItem);
+				var subText = "";
+				for(var x=0, y=data[n].length; x<y; x++){
+					subText = subText + data[n][x] + " ";
+				}
+				newSubItem.innerHTML = subText;
+			}
+		}
+	}
+	
+	function clearData(){
+		if(localStorage.length === 0){
+			alert("No musician data has been saved.");
+		}else{
+			localStorage.clear();
+			alert("All Musicians Deleted");
+			window.location.reload();
+			return false;
+		}
+	}
+	
 	//Primary Instrument Values
 	var pInstrument = [" -Primary Instrument- ","Guitar", "Bass", "Drums", "Keys", "Vocals", "Other"];
 	var instruments;
 	makePrimaryList();
 
-
-
 	//Get Relevant Click Events
 	var displayDataLink = id("displayDataLink");
 	displayDataLink.addEventListener("click", displayData);
+	
 	var clearDataLink = id("clearDataLink");
 	clearDataLink.addEventListener("click", clearData);
 
 	var storeDataButton = id("submit");
 	storeDataButton.addEventListener("click", saveData);	
+
+	//var addAnother = id("addAnother");
+	//addAnother.addEventListener("click", alert("hello"));	
 
 });
 
